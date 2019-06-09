@@ -42,8 +42,12 @@ stages:
 - stage: prod
   dependsOn: staging
   jobs:
-  - job: deploy_prod
-    pool:
-      vmImage: 'Ubuntu 16.04'
-    steps:
-    - script: echo Prod
+    - deployment: DeployContainer
+      pool:
+        vmImage: 'Ubuntu 16.04'
+      environment: 'prod'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - script: echo Prod
