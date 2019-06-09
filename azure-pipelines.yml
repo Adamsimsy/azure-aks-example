@@ -1,19 +1,45 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
-- master
+  - master
 
-pool:
-  vmImage: 'ubuntu-latest'
+stages:
+- stage: build
+  jobs:
+  - job: run_build
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'adamazureacr'
+        repository: 'examplewebapp'
+        command: 'buildAndPush'
+        Dockerfile: '**/Dockerfile'
+        tags: |
+          latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- stage: test
+  dependsOn: build
+  jobs:
+  - job: run_tests
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    steps:
+    - script: echo Test
+    
+- stage: staging
+  dependsOn: test
+  jobs:
+  - job: deploy_staging
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    steps:
+    - script: echo Staging
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- stage: prod
+  dependsOn: staging
+  jobs:
+  - job: deploy_prod
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    steps:
+    - script: echo Prod
