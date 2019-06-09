@@ -5,10 +5,8 @@ stages:
 - stage: Build
   jobs:
   - job: Build
-
     pool:
       vmImage: 'ubuntu-latest'
-
     steps:
     - task: Docker@2
       inputs:
@@ -16,17 +14,30 @@ stages:
         repository: 'examplewebapp'
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
-- stage: Deploy
+
+- stage: test
+  dependsOn: build
   jobs:
-    # track deployments on the environment
-  - deployment: DeployWeb
+  - job: run_tests
     pool:
-      vmImage: 'Ubuntu-16.04'
-    # creates an environment if it doesn’t exist
-    environment: 'smarthotel-dev'
-    strategy:
-      # default deployment strategy
-      runOnce:
-        deploy:
-          steps:
-          - script: echo my first deployment
+      vmImage: 'Ubuntu 16.04'
+    steps:
+    - script: echo Test
+    
+- stage: staging
+  dependsOn: test
+  jobs:
+  - job: deploy_staging
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    steps:
+    - script: echo Staging
+
+- stage: prod
+  dependsOn: staging
+  jobs:
+  - job: deploy_prod
+    pool:
+      vmImage: 'Ubuntu 16.04'
+    steps:
+    - script: echo Prod
