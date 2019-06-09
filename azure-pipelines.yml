@@ -17,3 +17,16 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
+
+- task: DockerCompose@0
+  inputs:
+    containerregistrytype: 'Azure Container Registry'
+    azureSubscription: 'Pay-As-You-Go(7065e8b0-8cf7-4e1e-ad88-a04542f800da)'
+    azureContainerRegistry: '{"loginServer":"adamazureacr.azurecr.io", "id" : "/subscriptions/7065e8b0-8cf7-4e1e-ad88-a04542f800da/resourceGroups/container-registery-rg/providers/Microsoft.ContainerRegistry/registries/adamazureacr"}'
+    dockerComposeFile: '**/docker-compose.yml'
+    action: 'Build services'
+
+- task: Docker@2
+  inputs:
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'
