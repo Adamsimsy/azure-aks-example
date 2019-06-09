@@ -16,7 +16,6 @@ stages:
         Dockerfile: '**/Dockerfile'
         tags: |
           latest
-          $(BuildID)
 
 - stage: test
   dependsOn: build
