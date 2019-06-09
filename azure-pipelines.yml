@@ -2,9 +2,9 @@ trigger:
   - master
 
 stages:
-- stage: Build
+- stage: build
   jobs:
-  - job: Build
+  - job: run_build
     pool:
       vmImage: 'ubuntu-latest'
     steps:
