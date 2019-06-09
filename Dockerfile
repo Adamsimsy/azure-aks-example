@@ -1,10 +1,7 @@
-FROM busybox:latest
+FROM microsoft/dotnet:aspnetcore-runtime
 LABEL maintainer="Adamsimsy <adamsimsy@gmai.com>"
 
-ADD index.html /www/index.html
+WORKDIR /app
+COPY ./publish .
 
-EXPOSE 8000
-HEALTHCHECK CMD nc -z localhost 8000
-
-# Create a basic webserver and run it until the container is stopped
-CMD trap "exit 0;" TERM INT; httpd -p 8000 -h /www -f & wait
+ENTRYPOINT ["dotnet","ExampleWebApp.dll"]
